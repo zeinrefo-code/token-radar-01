@@ -1,11 +1,11 @@
-// A token-radar-01 entry (Node 22, standard library only): Launch Radar, model radar-2.
+// A token-radar-01 entry (Node 22, standard library only): Launch Radar, model radar-3.
 //
 // The program reads the sealed snapshot from /input/snapshot.json (or --input <file|dir>), scores every
-// pre-token protocol with the peer-priced model in lib/model.ts — each protocol's TVL is priced at the
-// multiple its own category's live tokens trade at in the same snapshot, adjusted for seven-day growth
-// and time without a token — writes the ranked board to /output/board.json, and copies this repository's
-// dashboard/ and screenshots/ to /output. Last, it writes /output/dossier.json, the summary the judge
-// reads, with the vendored make.fun library.
+// pre-token protocol with the fitted model in lib/model.ts — log market cap regressed on TVL, seven-day
+// growth, time listed and chain count over the snapshot's own live-token peers, with a shrunk category
+// adjustment, and the fit validated held-out twice before it prices anything — writes the ranked board
+// to /output/board.json, and copies this repository's dashboard/ and screenshots/ to /output. Last, it
+// writes /output/dossier.json, the summary the judge reads, with the vendored make.fun library.
 //
 // The dashboard is a static page, no framework and no network: dashboard/index.html, dashboard/app.css
 // and dashboard/app.js read /output/data.js, which this program writes from the same board, and the page
@@ -88,6 +88,6 @@ writeFileSync(join(out, 'dossier.json'), buildDossier(out, { text_max_bytes: TEX
 
 process.stdout.write(
   `token radar: ${snapshot.protocols.length} protocols, ${snapshot.watchlist.length} on the watchlist, ${board.length} rows scored (${radar.early_size} early, ${radar.live_size} live set aside)\n` +
-    `token radar: calibrated on ${radar.calibration.peer_count} live-token peers, global median ${radar.calibration.global_median}x TVL across ${radar.calibration.categories.length} categories\n` +
+    `token radar: fitted on ${radar.fit.peers} live-token peers (log TVL ${radar.fit.log_tvl}, growth ${radar.fit.growth}, age ${radar.fit.age}, chains ${radar.fit.chains}); held-out median miss x${radar.validation.fitted_median_miss} against radar-2's x${radar.validation.baseline_median_miss}\n` +
     `token radar: wrote ${join(out, 'board.json')}, ${join(out, 'data.js')}, ${join(out, 'dashboard')} (3 files), ${join(out, 'screenshots')} (${shots.length} images) and ${join(out, 'dossier.json')}\n`,
 );
